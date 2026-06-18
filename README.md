@@ -22,35 +22,48 @@ A fast, local-first Kanban board with real-time multi-tab synchronization. Built
 - **Persistence**: localStorage
 - **Sync**: BroadcastChannel API
 
-## Synchronization Model
+## Synchronization Model & BroadcastChannel Architecture
 
-The app uses a **Single Source of Truth** pattern with an **Event-Driven Broadcast** model:
+The app uses a **Single Source of Truth** pattern with an **Event-Driven Broadcast** model via the browser-native `BroadcastChannel` API (channel name: `kanban-board`). This enables efficient multi-tab state synchronization without any backend or server overhead.
 
-1.  **State Update**: When a user performs an action (e.g., moves a card), the local Zustand store is updated immediately.
-2.  **Persistence**: The full board state is serialized and saved to `localStorage` (debounced by 250ms).
-3.  **Broadcast**: A typed message containing the `originTabId` and necessary payload is sent over a `BroadcastChannel` named `kanban-board`.
-4.  **Reception**: Other tabs listening on the same channel receive the message, verify it didn't originate from themselves, and apply the update to their own local Zustand store.
+### Architecture Workflow
+1. **State Update**: When a user performs an action (e.g., moves a card), the local Zustand store is updated immediately.
+2. **Persistence**: The full board state is serialized and saved to `localStorage` (debounced by 250ms).
+3. **Broadcast**: A typed message containing the `originTabId` and necessary payload is sent over a `BroadcastChannel`.
+4. **Reception**: Sibling tabs listening on the same channel receive the message, validate its origin, and apply the update directly to their local Zustand store.
+
+### Echo Prevention & Self-Filtering
+Although the native browser `BroadcastChannel` API does not deliver broadcasted events back to the context that sent them, the application employs a strict multi-layer **Origin Validation Guard** for robust echo prevention, duplicate mutation protection, and state integrity:
+- **Client-Side Identity Initialization**: Every active tab dynamically initializes a unique `tabId` and random human-readable `tabAlias` at mount time.
+- **Payload Verification**: Every event message includes either an `originTabId` or a `tabId` property tracking the originating tab.
+- **Ingestion Filters**: Upon message ingestion inside the `useSync` hook, the incoming packet is filtered immediately:
+  ```typescript
+  if ("originTabId" in message && message.originTabId === tabId) return;
+  if ("tabId" in message && message.tabId === tabId) return;
+  ```
+  This guarantees that no tab can accidentally process or re-evaluate its own actions, preventing feedback loops and redundant state computations.
+- **Heartbeat Coordination**: Because native `BroadcastChannel` suppresses message echoes back to the sender, tabs cannot rely on a shared registration echo to remain visible. Instead, each tab independently fires an internal heartbeat interval loop to maintain its active status in the presence tracking roster, safely avoiding self-pruning decay.
 
 ### Advanced Multi-Tab Scaling Performance
-
 To safely scale beyond standard bounds (tested and verified smoothly with 10+ concurrent active browser tabs), several high-density coordination mechanisms are built in:
 - **Broadcast Storm Protection (Handshake Jitter)**: When a new tab mounts and queries existing sessions, active sibling tabs stagger their handshake reply frames using a randomized delay (`0-150ms jitter`). This spreads the message volume across multiple event loop ticks, preventing browser socket throttling and frame drops.
 - **$O(N)$ Targeted Messaging Routing**: Registration handshakes utilize a discrete `targetTabId` constraint boundary. Sibling tabs drop response packets at the intake layer if they are not the intended recipient, dropping concurrent network re-renders from an exponential $O(N^2)$ explosion down to linear $O(N)$ efficiency.
-- **Heartbeat Self-Pruning Reconciler**: To ensure accurate presence tracking without specifications collision (as `BroadcastChannel` excludes echo frames back to the caller), each tab triggers its own presence heartbeat loop internally. This avoids accidental self-pruning decay blocks after 30 seconds of high-concurrency activity.
 
-## Getting Started
+## One-Command Setup
 
-1.  Install dependencies:
-    ```bash
-    npm install
-    ```
+Get the application up and running instantly with a single command:
 
-2.  Run the development server:
-    ```bash
-    npm run dev
-    ```
+```bash
+npm install && npm run dev
+```
 
-3.  Open [http://localhost:3000](http://localhost:3000) in multiple browser tabs to see the live synchronization in action.
+After running the command, open [http://localhost:3000](http://localhost:3000) in multiple browser tabs to see the live multi-tab synchronization in action.
+
+## Known Limitations
+
+- **Local & Profile-Bound Isolation**: Because synchronization relies entirely on `localStorage` and `BroadcastChannel`, state replication is strictly bound to the same browser profile on the same physical device. It will not synchronize across different machines or distinct browser engines (e.g., syncing between Google Chrome and Mozilla Firefox).
+- **Last-Write-Wins Conflict Resolution**: In the absence of a centralized server-side coordinator or an operational transformation/CRDT engine, concurrent updates to the exact same card field at the exact same millisecond from two separate tabs follow a standard "last-write-wins" behavior.
+- **Storage Boundaries**: State persistence is constrained by standard browser `localStorage` capacity limits (typically ~5MB). While more than enough for thousands of tasks and history logs, it acts as a hard upper boundary.
 
 ## Architectural Decisions
 
