@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Font */
+  --font-sans: var(--font-inter), "Inter", sans-serif;
+
+  /* Page and surface backgrounds */
+  --color-background: #f6f7fb;
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f9fafb;
+  --color-surface-tertiary: #f2f5f7;
+  --color-surface-muted: #edf2ff;
+
+  /* Board-specific surfaces */
+  --color-board: #ffffff;
+  --color-board-raised: #fbfcfe;
+  --color-board-muted: #f8fafc;
+
+  /* Borders */
+  --color-border: #e7eaf3;
+  --color-border-light: #edf2f7;
+  --color-border-muted: #d8dde8;
+
+  /* Text */
+  --color-text-primary: #101828;
+  --color-text-secondary: #6a7282;
+  --color-text-muted: #99a1af;
+  --color-text-dark: #364153;
+  --color-text-darker: #111827;
+  --color-text-black: #131316;
+
+  /* Primary accent — violet */
+  --color-accent: #7c5cfc;
+  --color-accent-dark: #5e4cff;
+  --color-accent-light: #ede9fe;
+  --color-accent-muted: #f5f3ff;
+  --color-accent-foreground: #ffffff;
+
+  /* Success — green */
+  --color-success: #10b981;
+  --color-success-alt: #00bc7d;
+  --color-success-dark: #007a55;
+  --color-success-light: #d1fae5;
+  --color-success-lightest: #ecfdf5;
+  --color-success-foreground: #047857;
+
+  /* Info — blue */
+  --color-info: #3b82f6;
+  --color-info-dark: #155dfc;
+  --color-info-light: #dbeafe;
+  --color-info-lightest: #eff6ff;
+  --color-info-foreground: #1d4ed8;
+
+  /* Warning — amber / orange */
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-warning-lightest: #fffbeb;
+  --color-warning-foreground: #92400e;
+
+  /* Error — red */
+  --color-error: #ef4444;
+  --color-error-light: #fee2e2;
+  --color-error-lightest: #fef2f2;
+  --color-error-foreground: #b91c1c;
+
+  /* Drag / sync states */
+  --color-drag-active: #c7d2fe;
+  --color-drag-over: #ede9fe;
+  --color-sync-live: #22c55e;
+  --color-sync-muted: #94a3b8;
+
+  /* Assignee chips */
+  --color-avatar-1: #dbeafe;
+  --color-avatar-2: #ede9fe;
+  --color-avatar-3: #dcfce7;
+  --color-avatar-4: #ffedd5;
+
+  /* Overlays */
+  --color-overlay: rgba(17, 24, 39, 0.55);
+  --color-overlay-dark: #111827;
+
+  /* Border radius */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-background text-text-primary font-sans antialiased;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
