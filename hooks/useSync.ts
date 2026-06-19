@@ -8,11 +8,14 @@ import { getRandomAlias } from "@/lib/board-storage";
 
 const HEARTBEAT_INTERVAL = 15000; // 15 seconds
 const PRUNE_THRESHOLD = 30000; // 30 seconds
+const REMOTE_DRAG_STALE_MS = 30000;
 
 export const useSync = () => {
   const { 
     tabId, tabAlias, registerTab, unregisterTab, pruneTabs, 
-    moveCard, addCard, updateCard, deleteCard, renameColumn, renameBoard 
+    moveCard, addCard, updateCard, deleteCard, renameColumn, renameBoard,
+    setRemoteDrag, updateRemoteDragPreview, clearRemoteDrag, clearRemoteDragsByTab,
+    pruneStaleRemoteDrags,
   } = useBoardStore(useShallow((state) => ({
     tabId: state.tabId,
     tabAlias: state.tabAlias,
@@ -24,7 +27,12 @@ export const useSync = () => {
     updateCard: state.updateCard,
     deleteCard: state.deleteCard,
     renameColumn: state.renameColumn,
-    renameBoard: state.renameBoard
+    renameBoard: state.renameBoard,
+    setRemoteDrag: state.setRemoteDrag,
+    updateRemoteDragPreview: state.updateRemoteDragPreview,
+    clearRemoteDrag: state.clearRemoteDrag,
+    clearRemoteDragsByTab: state.clearRemoteDragsByTab,
+    pruneStaleRemoteDrags: state.pruneStaleRemoteDrags,
   })));
 
   // Client-side identity initialization
@@ -71,6 +79,7 @@ export const useSync = () => {
           deleteCard(message.cardId, true, message.originTabId);
           break;
         case "card:move":
+          clearRemoteDrag(message.cardId);
           moveCard(
             message.cardId, 
             message.fromColumnId, 
@@ -80,6 +89,22 @@ export const useSync = () => {
             false,
             message.originTabId
           );
+          break;
+        case "card:drag-start":
+          setRemoteDrag({
+            cardId: message.cardId,
+            originTabId: message.originTabId,
+            fromColumnId: message.fromColumnId,
+            fromIndex: message.fromIndex,
+            previewColumnId: null,
+            previewIndex: null,
+          });
+          break;
+        case "card:drag-preview":
+          updateRemoteDragPreview(message.cardId, message.toColumnId, message.toIndex);
+          break;
+        case "card:drag-end":
+          clearRemoteDrag(message.cardId);
           break;
         case "column:rename":
           renameColumn(message.columnId, message.title, true, message.originTabId);
@@ -103,6 +128,7 @@ export const useSync = () => {
           }
           break;
         case "tab:unregister":
+          clearRemoteDragsByTab(message.tabId);
           unregisterTab(message.tabId);
           break;
       }
@@ -125,6 +151,7 @@ export const useSync = () => {
     // Prune stale tabs
     const pruneInterval = setInterval(() => {
       pruneTabs(PRUNE_THRESHOLD);
+      pruneStaleRemoteDrags(REMOTE_DRAG_STALE_MS);
     }, HEARTBEAT_INTERVAL);
 
     // Unregister on close
@@ -142,6 +169,8 @@ export const useSync = () => {
     };
   }, [
     tabId, tabAlias, registerTab, unregisterTab, pruneTabs, 
-    addCard, updateCard, deleteCard, moveCard, renameColumn, renameBoard
+    addCard, updateCard, deleteCard, moveCard, renameColumn, renameBoard,
+    setRemoteDrag, updateRemoteDragPreview, clearRemoteDrag, clearRemoteDragsByTab,
+    pruneStaleRemoteDrags,
   ]);
 };

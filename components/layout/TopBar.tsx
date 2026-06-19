@@ -6,6 +6,7 @@ import { TabCounter } from "@/components/board/TabCounter";
 import { Button } from "@/components/ui/Button";
 import { useBoardStore } from "@/hooks/useBoardStore";
 import { Priority } from "@/types";
+import { useTheme } from "@/hooks/useTheme";
 
 interface TopBarProps {
   onToggleLog: () => void;
@@ -15,6 +16,7 @@ export const TopBar = ({ onToggleLog }: TopBarProps) => {
   const { board, searchQuery, setSearchQuery, priorityFilter, setPriorityFilter, renameBoard } = useBoardStore();
   const [isEditingTitle, setIsEditingTitle] = React.useState(false);
   const [tempTitle, setTempTitle] = React.useState(board.title);
+  const { theme, toggleTheme } = useTheme();
 
   const handleTitleSubmit = () => {
     if (tempTitle.trim() && tempTitle !== board.title) {
@@ -94,8 +96,34 @@ export const TopBar = ({ onToggleLog }: TopBarProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-8">
+      <div className="flex items-center gap-6">
         <TabCounter />
+        
+        <Button 
+          variant="ghost" 
+          onClick={toggleTheme}
+          className="w-10 h-10 flex items-center justify-center p-0 rounded-lg text-text-secondary hover:text-text-primary shrink-0 transition-colors"
+          aria-label="Toggle Theme"
+        >
+          {theme === "dark" ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2" />
+              <path d="M12 20v2" />
+              <path d="m4.93 4.93 1.41 1.41" />
+              <path d="m17.66 17.66 1.41 1.41" />
+              <path d="M2 12h2" />
+              <path d="M20 12h2" />
+              <path d="m6.34 17.66-1.41 1.41" />
+              <path d="m19.07 4.93-1.41 1.41" />
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
+          )}
+        </Button>
+
         <div className="h-8 w-px bg-border" />
         <Button 
           variant="ghost" 

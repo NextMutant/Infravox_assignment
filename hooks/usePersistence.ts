@@ -23,17 +23,24 @@ export const usePersistence = () => {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
-    // Subscribe to state changes
+    // Subscribe to board state and isDragging changes
     const unsub = useBoardStore.subscribe(
-      (state) => state.board,
-      (board) => {
+      (state) => [state.board, state.isDragging] as const,
+      ([board, isDragging]) => {
         // Skip saving on the very first mount/hydration
         if (isInitialMount.current) return;
 
         clearTimeout(timeoutId);
+
+        // Skip writing to localStorage while dragging is in progress
+        if (isDragging) return;
+
         timeoutId = setTimeout(() => {
           saveBoard(board);
         }, 250);
+      },
+      {
+        equalityFn: (a, b) => a[0] === b[0] && a[1] === b[1],
       }
     );
 

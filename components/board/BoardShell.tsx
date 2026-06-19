@@ -28,7 +28,7 @@ export const BoardShell = () => {
   useSync();
 
   return (
-    <div className="flex flex-col h-screen bg-background font-sans overflow-hidden">
+    <div className="flex flex-col h-screen bg-textured font-sans overflow-hidden">
       <TopBar onToggleLog={() => setShowLog(!showLog)} />
       
       <div className="flex flex-1 overflow-hidden">

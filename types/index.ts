@@ -61,6 +61,18 @@ export type TabInfo = {
   lastSeen: number;
 };
 
+export type RemoteDragEntry = {
+  cardId: string;
+  originTabId: string;
+  fromColumnId: string;
+  fromIndex: number;
+  previewColumnId: string | null;
+  previewIndex: number | null;
+  lastUpdatedAt: number;
+};
+
+export type RemoteDragMap = Record<string, RemoteDragEntry>;
+
 export type BroadcastMessage =
   | { type: "board:init"; originTabId: string; board: Board }
   | { type: "board:update"; originTabId: string; board: Board }
@@ -68,6 +80,9 @@ export type BroadcastMessage =
   | { type: "card:update"; originTabId: string; card: Card }
   | { type: "card:delete"; originTabId: string; cardId: string; columnId: string }
   | { type: "card:move"; originTabId: string; cardId: string; fromColumnId: string; toColumnId: string; fromIndex: number; toIndex: number }
+  | { type: "card:drag-start"; originTabId: string; cardId: string; fromColumnId: string; fromIndex: number }
+  | { type: "card:drag-preview"; originTabId: string; cardId: string; toColumnId: string; toIndex: number }
+  | { type: "card:drag-end"; originTabId: string; cardId: string }
   | { type: "column:rename"; originTabId: string; columnId: string; title: string }
   | { type: "board:rename"; originTabId: string; title: string }
   | { type: "activity:add"; originTabId: string; entry: ActivityLogEntry }
@@ -82,11 +97,14 @@ export type BoardState = {
   tabAlias: string;
   activeTabs: Record<string, TabInfo>;
   selectedCardId: string | null;
+  remoteDrags: RemoteDragMap;
+  isDragging: boolean;  // true while local drag is in progress — gates localStorage writes
   
   // Actions
   setSearchQuery: (query: string) => void;
   setPriorityFilter: (filter: Priority | 'All') => void;
   setSelectedCardId: (id: string | null) => void;
+  setIsDragging: (dragging: boolean) => void;
   
   // Board Actions
   addCard: (columnId: string, title: string, prebuiltCard?: Card, originTabId?: string) => void;
@@ -96,6 +114,13 @@ export type BoardState = {
   moveCard: (cardId: string, fromColumnId: string, toColumnId: string, fromIndex: number, toIndex: number, silent?: boolean, originTabId?: string) => void;
   renameColumn: (columnId: string, title: string, remote?: boolean, originTabId?: string) => void;
   renameBoard: (title: string, remote?: boolean, originTabId?: string) => void;
+  
+  // Remote drag (ephemeral, not persisted)
+  setRemoteDrag: (entry: Omit<RemoteDragEntry, "lastUpdatedAt">) => void;
+  updateRemoteDragPreview: (cardId: string, toColumnId: string, toIndex: number) => void;
+  clearRemoteDrag: (cardId: string) => void;
+  clearRemoteDragsByTab: (tabId: string) => void;
+  pruneStaleRemoteDrags: (maxAgeMs: number) => void;
   
   // Sync Actions
   hydrateBoard: (board: Board) => void;
