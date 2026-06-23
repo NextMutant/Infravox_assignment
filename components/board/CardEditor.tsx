@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/Button";
 import { useBoardStore } from "@/hooks/useBoardStore";
 import { Priority, CommentItem } from "@/types";
 import { TEAM_MEMBERS } from "@/lib/board-storage";
+const CARD_COLORS = [
+  { value: "default", className: "bg-white border" },
+  { value: "blue", className: "bg-blue-400" },
+  { value: "green", className: "bg-green-400" },
+  { value: "yellow", className: "bg-yellow-300" },
+  { value: "red", className: "bg-red-400" },
+] as const;
 
 export const CardEditor = () => {
   const { selectedCardId, setSelectedCardId, board, updateCard, deleteCard, addComment } = useBoardStore();
@@ -130,6 +137,38 @@ export const CardEditor = () => {
               <option key={member.id} value={member.id}>{member.name}</option>
             ))}
           </select>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+            Card Color
+          </label>
+
+        <div className="flex gap-3">
+         {CARD_COLORS.map((color) => (
+        <button
+          key={color.value}
+          type="button"
+          onClick={() =>
+          updateCard(card.id, {
+            color: color.value,
+          })
+        }
+        className={`
+          h-8
+          w-8
+          rounded-full
+          transition-all
+          ${color.className}
+          ${
+            card.color === color.value
+              ? "ring-2 ring-accent ring-offset-2"
+              : "hover:scale-110"
+          }
+        `}
+      />
+    ))}
+          </div>
         </div>
 
         {/* Comments Section */}

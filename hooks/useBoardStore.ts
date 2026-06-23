@@ -56,6 +56,7 @@ export const useBoardStore = create<BoardState>()(
         isArchived: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        color: "default",
       };
 
       const newCards = { ...state.board.cards, [cardId]: newCard };

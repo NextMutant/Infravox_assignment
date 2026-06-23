@@ -27,9 +27,22 @@ export const saveBoard = (board: Board) => {
 
 export const loadBoard = (): Board | null => {
   if (typeof window === "undefined") return null;
+
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
+
+    if (!data) return null;
+
+    const board: Board = JSON.parse(data);
+
+    // Migration for older saved boards
+    Object.values(board.cards).forEach((card) => {
+      if (!card.color) {
+        card.color = "default";
+      }
+    });
+
+    return board;
   } catch (error) {
     console.error("Failed to load board from localStorage:", error);
     return null;
@@ -58,6 +71,7 @@ export const createSeedBoard = (): Board => {
       isArchived: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      color: "default",
     },
     [card2Id]: {
       id: card2Id,
@@ -71,6 +85,7 @@ export const createSeedBoard = (): Board => {
       isArchived: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      color: "default",
     },
   };
 

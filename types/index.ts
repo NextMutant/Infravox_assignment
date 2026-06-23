@@ -1,4 +1,5 @@
 export type Priority = 'Low' | 'Medium' | 'High';
+export type CardColor = "default"| "blue"| "green"| "yellow"| "red";
 
 export type Assignee = {
   id: string;
@@ -26,6 +27,7 @@ export type Card = {
   isArchived: boolean;
   createdAt: string;
   updatedAt: string;
+  color: CardColor;
 };
 
 export type Column = {

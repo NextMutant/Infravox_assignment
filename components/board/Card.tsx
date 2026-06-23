@@ -54,6 +54,23 @@ export const Card = ({ card, isOverlay }: CardProps) => {
     );
   }
 
+  const colorClasses = {
+    default:
+        "bg-surface",
+
+    blue:
+        "bg-blue-100 dark:bg-blue-950",
+
+    green:
+        "bg-green-100 dark:bg-green-950",
+
+    yellow:
+        "bg-yellow-100 dark:bg-yellow-900",
+
+    red:
+        "bg-red-100 dark:bg-red-950",
+};
+
   return (
     <div 
       ref={setNodeRef}
@@ -61,11 +78,27 @@ export const Card = ({ card, isOverlay }: CardProps) => {
       {...attributes}
       {...listeners}
       onClick={() => !isOverlay && setSelectedCardId(card.id)}
-      className={`bg-surface border ${
-        isOverlay ? 'border-accent shadow-xl scale-105 opacity-90' : 
-        isSelected ? 'border-accent ring-1 ring-accent/20' : 
-        'border-border'
-      } rounded-[16px] p-[18px] shadow-sm hover:border-accent/40 hover:shadow-md transition-all cursor-grab active:cursor-grabbing group select-none`}
+    className={`
+    ${colorClasses[card.color]}
+    border
+    ${
+    isOverlay
+      ? "border-accent shadow-xl scale-105 opacity-90"
+      : isSelected
+      ? "border-accent ring-1 ring-accent/20"
+      : "border-border"
+  }
+    rounded-[16px]
+    p-[18px]
+    shadow-sm
+   hover:border-accent/40
+    hover:shadow-md
+    transition-all
+    cursor-grab
+    active:cursor-grabbing
+    group
+    select-none
+  `}
     >
       <div className="flex flex-col gap-3.5">
         <div className="flex items-center justify-between gap-2">

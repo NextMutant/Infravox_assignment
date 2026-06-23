@@ -22,7 +22,7 @@ const CardEditor = dynamic(() => import("./CardEditor").then(mod => mod.CardEdit
 });
 
 export const BoardShell = () => {
-  const [showLog, setShowLog] = useState(true);
+  const [showLog, setShowLog] = useState(false);
   const selectedCardId = useBoardStore((state) => state.selectedCardId);
   usePersistence();
   useSync();
