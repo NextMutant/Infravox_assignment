@@ -8,6 +8,7 @@ export const useTheme = () => {
   useEffect(() => {
     // Determine the theme based on the actual presence of the .dark class on mount
     const isDark = document.documentElement.classList.contains("dark");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(isDark ? "dark" : "light");
   }, []);
 

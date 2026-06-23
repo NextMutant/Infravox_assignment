@@ -13,7 +13,7 @@ const REMOTE_DRAG_STALE_MS = 30000;
 export const useSync = () => {
   const { 
     tabId, tabAlias, registerTab, unregisterTab, pruneTabs, 
-    moveCard, addCard, updateCard, deleteCard, renameColumn, renameBoard,
+    moveCard, addCard, updateCard, deleteCard, renameColumn, renameBoard, resetBoard,
     setRemoteDrag, updateRemoteDragPreview, clearRemoteDrag, clearRemoteDragsByTab,
     pruneStaleRemoteDrags,
   } = useBoardStore(useShallow((state) => ({
@@ -28,6 +28,7 @@ export const useSync = () => {
     deleteCard: state.deleteCard,
     renameColumn: state.renameColumn,
     renameBoard: state.renameBoard,
+    resetBoard: state.resetBoard,
     setRemoteDrag: state.setRemoteDrag,
     updateRemoteDragPreview: state.updateRemoteDragPreview,
     clearRemoteDrag: state.clearRemoteDrag,
@@ -112,6 +113,9 @@ export const useSync = () => {
         case "board:rename":
           renameBoard(message.title, true, message.originTabId);
           break;
+        case "board:reset":
+          resetBoard(true, message.originTabId);
+          break;
         case "tab:register":
           // If this registration message specifies a target and it's not us, ignore it completely.
           // This avoids the O(N^2) broadcast explosion where active tabs hear each other's responses to a new tab.
@@ -169,7 +173,7 @@ export const useSync = () => {
     };
   }, [
     tabId, tabAlias, registerTab, unregisterTab, pruneTabs, 
-    addCard, updateCard, deleteCard, moveCard, renameColumn, renameBoard,
+    addCard, updateCard, deleteCard, moveCard, renameColumn, renameBoard, resetBoard,
     setRemoteDrag, updateRemoteDragPreview, clearRemoteDrag, clearRemoteDragsByTab,
     pruneStaleRemoteDrags,
   ]);

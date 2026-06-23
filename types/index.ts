@@ -78,6 +78,7 @@ export type RemoteDragMap = Record<string, RemoteDragEntry>;
 export type BroadcastMessage =
   | { type: "board:init"; originTabId: string; board: Board }
   | { type: "board:update"; originTabId: string; board: Board }
+  | { type: "board:reset"; originTabId: string; board: Board }
   | { type: "card:create"; originTabId: string; card: Card; columnId: string; index: number }
   | { type: "card:update"; originTabId: string; card: Card }
   | { type: "card:delete"; originTabId: string; cardId: string; columnId: string }
@@ -116,6 +117,7 @@ export type BoardState = {
   moveCard: (cardId: string, fromColumnId: string, toColumnId: string, fromIndex: number, toIndex: number, silent?: boolean, originTabId?: string) => void;
   renameColumn: (columnId: string, title: string, remote?: boolean, originTabId?: string) => void;
   renameBoard: (title: string, remote?: boolean, originTabId?: string) => void;
+  resetBoard: (remote?: boolean, originTabId?: string) => void;
   
   // Remote drag (ephemeral, not persisted)
   setRemoteDrag: (entry: Omit<RemoteDragEntry, "lastUpdatedAt">) => void;

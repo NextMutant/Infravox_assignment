@@ -13,10 +13,19 @@ interface TopBarProps {
 }
 
 export const TopBar = ({ onToggleLog }: TopBarProps) => {
-  const { board, searchQuery, setSearchQuery, priorityFilter, setPriorityFilter, renameBoard } = useBoardStore();
+  const { board, searchQuery, setSearchQuery, priorityFilter, setPriorityFilter, renameBoard, resetBoard } = useBoardStore();
   const [isEditingTitle, setIsEditingTitle] = React.useState(false);
   const [tempTitle, setTempTitle] = React.useState(board.title);
   const { theme, toggleTheme } = useTheme();
+
+  const handleResetBoard = () => {
+    const confirmReset = window.confirm(
+      "Are you sure you want to reset the board? This will erase all cards and columns and restore the default template board."
+    );
+    if (confirmReset) {
+      resetBoard();
+    }
+  };
 
   const handleTitleSubmit = () => {
     if (tempTitle.trim() && tempTitle !== board.title) {
@@ -99,14 +108,26 @@ export const TopBar = ({ onToggleLog }: TopBarProps) => {
       <div className="flex items-center gap-6">
         <TabCounter />
         
+        <button 
+          onClick={handleResetBoard}
+          className="w-11 h-11 flex items-center justify-center rounded-lg text-error hover:bg-error-light/40 dark:hover:bg-error-light/15 shrink-0 transition-colors focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
+          title="Reset Board"
+          aria-label="Reset Board"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+        </button>
+
         <Button 
           variant="ghost" 
           onClick={toggleTheme}
-          className="w-10 h-10 flex items-center justify-center p-0 rounded-lg text-text-secondary hover:text-text-primary shrink-0 transition-colors"
+          className="w-11 h-11 flex items-center justify-center p-0 rounded-lg text-text-secondary hover:text-text-primary shrink-0 transition-colors"
           aria-label="Toggle Theme"
         >
           {theme === "dark" ? (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="4" />
               <path d="M12 2v2" />
               <path d="M12 20v2" />
@@ -118,7 +139,7 @@ export const TopBar = ({ onToggleLog }: TopBarProps) => {
               <path d="m19.07 4.93-1.41 1.41" />
             </svg>
           ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
             </svg>
           )}

@@ -359,6 +359,36 @@ export const useBoardStore = create<BoardState>()(
       return newState;
     }),
 
+    resetBoard: (remote, originTabId) => set((state) => {
+      const seedBoard = createSeedBoard();
+      const newLog = addLogEntry(
+        [],
+        "created",
+        "board",
+        seedBoard.title,
+        originTabId || state.tabId
+      );
+
+      const newBoard = {
+        ...seedBoard,
+        activityLog: newLog,
+        lastUpdatedAt: new Date().toISOString(),
+      };
+
+      if (!remote) {
+        broadcastMessage({
+          type: "board:reset",
+          originTabId: state.tabId,
+          board: newBoard,
+        });
+      }
+
+      return {
+        board: newBoard,
+        selectedCardId: null,
+      };
+    }),
+
     hydrateBoard: (board) => set({ board }),
 
     setRemoteDrag: (entry) => set((state) => ({
