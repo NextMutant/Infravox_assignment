@@ -54,7 +54,7 @@ To safely scale beyond standard bounds (tested and verified smoothly with 10+ co
 Get the application up and running instantly with a single command:
 
 ```bash
-npm install && npm run dev
+npm install && npm run build && npm run dev
 ```
 
 After running the command, open [http://localhost:3000](http://localhost:3000) in multiple browser tabs to see the live multi-tab synchronization in action.
