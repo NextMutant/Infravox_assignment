@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useBoardStore } from "@/hooks/useBoardStore";
 import { Priority, CommentItem } from "@/types";
 import { TEAM_MEMBERS } from "@/lib/board-storage";
+/*
 const CARD_COLORS = [
   { value: "default", className: "bg-white border" },
   { value: "blue", className: "bg-blue-400" },
@@ -13,6 +14,7 @@ const CARD_COLORS = [
   { value: "yellow", className: "bg-yellow-300" },
   { value: "red", className: "bg-red-400" },
 ] as const;
+*/
 
 export const CardEditor = () => {
   const { selectedCardId, setSelectedCardId, board, updateCard, deleteCard, addComment } = useBoardStore();
@@ -139,6 +141,7 @@ export const CardEditor = () => {
           </select>
         </div>
 
+        {/*
         <div className="space-y-2">
           <label className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
             Card Color
@@ -170,6 +173,7 @@ export const CardEditor = () => {
     ))}
           </div>
         </div>
+        */}
 
         {/* Comments Section */}
         <div className="space-y-4 pt-4 border-t border-border">
