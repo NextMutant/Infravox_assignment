@@ -59,17 +59,17 @@ export const Card = ({ card, isOverlay }: CardProps) => {
         "bg-surface",
 
     blue:
-        "bg-blue-100 dark:bg-blue-950",
+        "bg-info-light",
 
     green:
-        "bg-green-100 dark:bg-green-950",
+        "bg-success-light",
 
     yellow:
-        "bg-yellow-100 dark:bg-yellow-900",
+        "bg-warning-light",
 
     red:
-        "bg-red-100 dark:bg-red-950",
-};
+        "bg-error-light",
+  };
 
   return (
     <div 

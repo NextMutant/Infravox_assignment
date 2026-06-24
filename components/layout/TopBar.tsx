@@ -16,7 +16,7 @@ export const TopBar = ({ onToggleLog }: TopBarProps) => {
   const { board, searchQuery, setSearchQuery, priorityFilter, setPriorityFilter, renameBoard, resetBoard } = useBoardStore();
   const [isEditingTitle, setIsEditingTitle] = React.useState(false);
   const [tempTitle, setTempTitle] = React.useState(board.title);
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const handleResetBoard = () => {
     const confirmReset = window.confirm(
@@ -120,14 +120,18 @@ export const TopBar = ({ onToggleLog }: TopBarProps) => {
           </svg>
         </button>
 
-        <Button 
-          variant="ghost" 
-          onClick={toggleTheme}
-          className="w-11 h-11 flex items-center justify-center p-0 rounded-lg text-text-secondary hover:text-text-primary shrink-0 transition-colors"
-          aria-label="Toggle Theme"
-        >
-          {theme === "dark" ? (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="flex items-center gap-0.5 p-1 bg-surface-secondary border border-border-light rounded-full shadow-sm shrink-0">
+          <button 
+            onClick={() => setTheme("light")}
+            className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer ${
+              theme === "light" 
+                ? "bg-surface text-accent shadow-sm scale-100 font-semibold" 
+                : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+            }`}
+            aria-label="Light Theme"
+            title="Light Theme"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="4" />
               <path d="M12 2v2" />
               <path d="M12 20v2" />
@@ -138,12 +142,22 @@ export const TopBar = ({ onToggleLog }: TopBarProps) => {
               <path d="m6.34 17.66-1.41 1.41" />
               <path d="m19.07 4.93-1.41 1.41" />
             </svg>
-          ) : (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          </button>
+          <button 
+            onClick={() => setTheme("dark")}
+            className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer ${
+              theme === "dark" 
+                ? "bg-surface text-accent shadow-sm scale-100 font-semibold" 
+                : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+            }`}
+            aria-label="Dark Theme"
+            title="Dark Theme"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
             </svg>
-          )}
-        </Button>
+          </button>
+        </div>
 
         <div className="h-8 w-px bg-border" />
         <Button 

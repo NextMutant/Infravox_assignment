@@ -12,8 +12,7 @@ export const useTheme = () => {
     setTheme(isDark ? "dark" : "light");
   }, []);
 
-  const toggleTheme = () => {
-    const nextTheme = theme === "light" ? "dark" : "light";
+  const setThemeMode = (nextTheme: Theme) => {
     setTheme(nextTheme);
     
     if (typeof window !== "undefined") {
@@ -26,5 +25,9 @@ export const useTheme = () => {
     }
   };
 
-  return { theme, toggleTheme };
+  const toggleTheme = () => {
+    setThemeMode(theme === "light" ? "dark" : "light");
+  };
+
+  return { theme, toggleTheme, setTheme: setThemeMode };
 };
